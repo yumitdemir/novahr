@@ -33,9 +33,10 @@ class Applications extends Page implements HasForms, HasTable
                 TextColumn::make('name')->searchable(),
                 TextColumn::make('surname')->searchable(),
                 TextColumn::make('phone')->searchable(),
+                TextColumn::make('email')->searchable(),
+                TextColumn::make('location')->searchable(),
+                TextColumn::make('years_of_experience')->searchable(),
                 TextColumn::make('compatibility_rating')->searchable(),
-                TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

@@ -48,42 +48,70 @@ class CvGradingService implements CvGradingServiceInterface
             $this->handleErrorResponse($e->getMessage());
         }
     }
-    public function getPrompt(string $cvText, string $jobDescription, array $additionalFields = []): string
+    public function getPrompt(string $cvText, string $jobDescription): string
     {
-        $additionalFieldsJson = json_encode($additionalFields, JSON_PRETTY_PRINT);
 
-        return "You are a career analysis assistant. Given the following CV, job description, and additional fields, please analyze and provide:
-        1. The total number of years of relevant experience that match the job requirements.
-        2. A general grading (on a scale from 1 to 10) of the CV’s compatibility with the job description.
-        3. The following additional fields if they exist in the CV: email, phone, linkedin, location, current job title, current employer, highest degree, university, certifications, technical skills, soft skills, languages spoken.
+        return <<<EOT
+            You are a career analysis assistant. You are provided with a CV and a job description. Your task is to objectively analyze the provided documents, focusing solely on career-related information. Do not consider or include any irrelevant details such as personal attributes or non-career-related information.
 
-        Return your answer as a valid JSON object with keys 'years_of_experience', 'compatibility_rating', and the additional fields if they exist.
+            Important:
+            Do not provide any text or explanation other than the JSON structure specified below.
 
-        For example, your output should look like:
-        {
-          \"years_of_experience\": 10,
-          \"compatibility_rating\": 8,
-          \"email\": \"john.doe@example.com\",
-          \"phone\": \"123-456-7890\",
-          \"linkedin\": \"https://linkedin.com/in/johndoe\",
-          \"location\": \"New York, NY\",
-          \"current_job_title\": \"Senior Software Engineer\",
-          \"current_employer\": \"Tech Corp\",
-          \"university\": \"MIT\",
-          \"certifications\": \"Certified Scrum Master\",
-          \"technical_skills\": \"PHP, JavaScript, Cloud Systems\",
-          \"soft_skills\": \"Leadership, Communication\",
-          \"languages_spoken\": \"English, Spanish\"
-        }
+            Steps to Follow:
 
-        CV:
-        {$cvText}
+            Experience Analysis:
+            Determine the total number of years of relevant work experience from the CV that directly match the job requirements.
 
-        Job Description:
-        {$jobDescription}
+            Compatibility Rating:
+            Provide a general compatibility rating of the CV relative to the job description on a scale from 1 (least compatible) to 10 (most compatible).
 
-        Additional Fields:
-        {$additionalFieldsJson}";
+            Field Extraction:
+            Extract the following fields from the CV if they exist:
+            - email
+            - phone
+            - linkedin
+            - location
+            - current job title
+            - current employer
+            - highest degree
+            - university
+            - certifications
+            - technical skills
+            - soft skills
+            - languages spoken
+
+            Output Format:
+            Return your answer as a valid JSON object with keys:
+            - "years_of_experience"
+            - "compatibility_rating"
+            and the additional fields if they exist in the CV.
+            Only include keys for the additional fields if the information is present in the CV.
+
+            Example Output:
+            {
+              "years_of_experience": 10,
+              "compatibility_rating": 8,
+              "email": "john.doe@example.com",
+              "phone": "123-456-7890",
+              "linkedin": "https://linkedin.com/in/johndoe",
+              "location": "New York, NY",
+              "current_job_title": "Senior Software Engineer",
+              "current_employer": "Tech Corp",
+              "highest_degree": "Bachelor's in Computer Science",
+              "university": "MIT",
+              "certifications": "Certified Scrum Master",
+              "technical_skills": "PHP, JavaScript, Cloud Systems",
+              "soft_skills": "Leadership, Communication",
+              "languages_spoken": "English, Spanish"
+            }
+
+            Input Documents:
+            CV:
+            {$cvText}
+
+            Job Description:
+            {$jobDescription}
+EOT;
     }
 
     public function extractJsonFromResponse(string $content): object
@@ -124,7 +152,22 @@ class CvGradingService implements CvGradingServiceInterface
         Notification::make()
             ->title('Cv Grading Completed')
             ->success()
-            ->body('Compatibility rating: ' . $response->compatibility_rating)
+            ->body(
+                'Compatibility rating: ' . ($response->compatibility_rating ?? 'N/A') .
+                ' Years of experience: ' . ($response->years_of_experience ?? 'N/A') .
+                ' Email: ' . ($response->email ?? 'N/A') .
+                ' Phone: ' . ($response->phone ?? 'N/A') .
+                ' LinkedIn: ' . ($response->linkedin ?? 'N/A') .
+                ' Location: ' . ($response->location ?? 'N/A') .
+                ' Current job title: ' . ($response->current_job_title ?? 'N/A') .
+                ' Current employer: ' . ($response->current_employer ?? 'N/A') .
+                ' University: ' . ($response->university ?? 'N/A') .
+                ' Certifications: ' . ($response->certifications ?? 'N/A') .
+                ' Technical skills: ' . ($response->technical_skills ?? 'N/A') .
+                ' Soft skills: ' . ($response->soft_skills ?? 'N/A') .
+                ' Languages spoken: ' . ($response->languages_spoken ?? 'N/A')
+            )
+            ->duration(1000000)
             ->send();
     }
 
