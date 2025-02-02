@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\JobOpeningnsResource\Pages\Applications;
 use App\Filament\Resources\JobOpeningResource\Pages;
 use App\Filament\Resources\JobOpeningResource\RelationManagers;
 use App\Models\JobOpening;
@@ -59,9 +60,9 @@ class JobOpeningResource extends Resource
                 //
             ])
             ->actions([
-//                Tables\Actions\Action::make('Applications')
-//                    ->url(fn (JobOpening $record): string => JobOpeningResource::getUrl('applications', ['record' => $record->id]))
-//                    ->icon(FilamentIcon::resolve('heroicon-o-eye') ?? 'heroicon-o-eye'),
+                Tables\Actions\Action::make('Applications')
+                    ->url(fn (JobOpening $record): string => JobOpeningResource::getUrl('applications', ['record' => $record->id]))
+                    ->icon(FilamentIcon::resolve('heroicon-o-eye') ?? 'heroicon-o-eye'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
@@ -85,8 +86,8 @@ class JobOpeningResource extends Resource
             'index' => Pages\ListJobOpenings::route('/'),
             'create' => Pages\CreateJobOpening::route('/create'),
             'edit' => Pages\EditJobOpening::route('/{record}/edit'),
-//            'applications' => Pages\Applications::route('/{record}/applications'),
-//            'view' => Pages\ViewJobOpening::route('/{record}'),
+            'applications' => Applications::route('/{record}/applications'),
+            'view' => Pages\ViewJobOpening::route('/{record}'),
         ];
     }
 }
