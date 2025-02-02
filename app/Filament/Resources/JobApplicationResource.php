@@ -5,13 +5,18 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\JobApplicationResource\Pages;
 use App\Filament\Resources\JobApplicationResource\RelationManagers;
 use App\Models\JobApplication;
+use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class JobApplicationResource extends Resource
 {
@@ -74,11 +79,56 @@ class JobApplicationResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Personal Information')
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('surname'),
+                        TextEntry::make('email'),
+                        TextEntry::make('phone'),
+                        TextEntry::make('linkedin'),
+                        TextEntry::make('location'),
+                    ])
+                    ->columns(2),
+                Section::make('Professional Information')
+                    ->schema([
+                        TextEntry::make('current_job_title'),
+                        TextEntry::make('current_employer'),
+                        TextEntry::make('years_of_experience'),
+                        TextEntry::make('university'),
+                        TextEntry::make('certifications'),
+                        TextEntry::make('technical_skills'),
+                        TextEntry::make('soft_skills'),
+                        TextEntry::make('languages_spoken'),
+                    ])
+                    ->columns(2),
+                Section::make('CV')
+                    ->schema([
+                        TextEntry::make('cv')
+                            ->label(false)
+                            ->url(fn(JobApplication $record) => Storage::url($record->cv))
+                            ->openUrlInNewTab(),
+                    ])
+                    ->columns(2),
+                Section::make('Job Opening Information')
+                    ->schema([
+                        TextEntry::make('jobOpening.title')
+                            ->label('Title'),
+                        TextEntry::make('jobOpening.description')
+                        ->label('Description'),
+                    ]),
             ]);
     }
 
@@ -95,6 +145,7 @@ class JobApplicationResource extends Resource
             'index' => Pages\ListJobApplications::route('/'),
             'create' => Pages\CreateJobApplication::route('/create'),
             'edit' => Pages\EditJobApplication::route('/{record}/edit'),
+            'view' => Pages\ViewJopApplication::route('/{record}'),
         ];
     }
 }

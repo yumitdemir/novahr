@@ -8,6 +8,7 @@ use App\Filament\Resources\JobOpeningResource\RelationManagers;
 use App\Models\JobOpening;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
@@ -72,6 +73,9 @@ class JobOpeningResource extends Resource
                 ]),
             ]);
     }
+
+
+
 
     public static function getRelations(): array
     {
