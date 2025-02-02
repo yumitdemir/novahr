@@ -1,0 +1,73 @@
+models:
+  Employee:
+    name: string:100
+    surname: string:100
+    email: string:100 nullable index
+    phone: string:100
+    hire_date: date
+    salary: float
+    status: enum:active,inactive
+    relationships:
+      hasMany: LeaveRequest
+      hasOne: Address, Role, Department
+
+  Address:
+    fullAddress: string
+    street: string
+    city: string
+    zip: string
+    relationships:
+      belongsTo: Employee
+
+  Role:
+    title: string:100
+    relationships:
+      belongsToMany: Employee
+
+  Department:
+    name: string:100
+    description: string
+    relationships:
+      hasMany: Employee
+      hasOne: Employee:manager
+
+  LeaveRequest:
+    start_date: date
+    end_date: date
+    status: string:100
+    description: string
+    leave_type: string:100
+    relationships:
+      belongsTo: Employee
+
+  JobOpening:
+    title: string:100
+    description: string
+    status: enum:active,inactive
+    relationships:
+      hasMany: JobApplication
+
+  JobApplication:
+    status: enum:pending,accepted,rejected
+    application_date: date nullable
+    name: string:100 nullable
+    surname: string:100 nullable
+    cv: text nullable
+    email: string nullable
+    phone: string nullable
+    linkedin: string nullable
+    location: string nullable
+    current_job_title: string nullable
+    current_employer: string nullable
+    years_of_experience: integer nullable
+    university: string nullable
+    certifications: string nullable
+    technical_skills: string nullable
+    soft_skills: string nullable
+    languages_spoken: string nullable
+    compatibility_rating: string nullable
+
+    relationships:
+      belongsTo: JobOpening
+
+
