@@ -36,7 +36,6 @@ class JobApplicationResource extends Resource
                 Forms\Components\TextInput::make('surname')
                     ->maxLength(100),
                 Forms\Components\FileUpload::make('cv')
-                    ->maxSize(1824*1024*10)
                     ->downloadable()
                     ->directory('cv')
                     ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']),

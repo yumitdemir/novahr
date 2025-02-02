@@ -59,9 +59,9 @@ class JobOpeningResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('Applications')
-                    ->url(fn (JobOpening $record): string => JobOpeningResource::getUrl('applications', ['record' => $record->id]))
-                    ->icon(FilamentIcon::resolve('heroicon-o-eye') ?? 'heroicon-o-eye'),
+//                Tables\Actions\Action::make('Applications')
+//                    ->url(fn (JobOpening $record): string => JobOpeningResource::getUrl('applications', ['record' => $record->id]))
+//                    ->icon(FilamentIcon::resolve('heroicon-o-eye') ?? 'heroicon-o-eye'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
