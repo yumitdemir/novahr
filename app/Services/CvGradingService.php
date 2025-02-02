@@ -24,10 +24,6 @@ class CvGradingService implements CvGradingServiceInterface
 
         $cvText = $this->extractTextFromCv($record->cv);
 
-        Notification::make()
-            ->title('Started Cv Grading for record for application')
-            ->send();
-
 
         $prompt = $this->getPrompt($cvText, $jobDescription, []);
 
@@ -84,6 +80,8 @@ class CvGradingService implements CvGradingServiceInterface
             Return your answer as a valid JSON object with keys:
             - "years_of_experience"
             - "compatibility_rating"
+            - "compatibility_rating_reason"
+            - "short_summary"
             and the additional fields if they exist in the CV.
             Only include keys for the additional fields if the information is present in the CV.
 
@@ -102,7 +100,9 @@ class CvGradingService implements CvGradingServiceInterface
               "certifications": "Certified Scrum Master",
               "technical_skills": "PHP, JavaScript, Cloud Systems",
               "soft_skills": "Leadership, Communication",
-              "languages_spoken": "English, Spanish"
+              "languages_spoken": "English, Spanish",
+              "compatibility_rating_reason": "The candidate has extensive experience in software engineering and possesses the required technical skills. However, the candidate lacks experience in cloud systems, which is a key requirement for the job.",
+              "short_summary": "John Doe is a Senior Software Engineer with 10 years of experience. He holds a Bachelor's in Computer Science from MIT and is certified as a Scrum Master. He has expertise in PHP, JavaScript, and leadership skills. He is fluent in English and Spanish."
             }
 
             Input Documents:
@@ -147,28 +147,9 @@ EOT;
             'technical_skills' => $response->technical_skills ?? $record->technical_skills,
             'soft_skills' => $response->soft_skills ?? $record->soft_skills,
             'languages_spoken' => $response->languages_spoken ?? $record->languages_spoken,
+            'compatibility_rating_reason' => $response->compatibility_rating_reason ?? $record->compatibility_rating_reason,
+            'short_summary' => $response->short_summary ?? $record->short_summary,
         ]);
-
-        Notification::make()
-            ->title('Cv Grading Completed')
-            ->success()
-            ->body(
-                'Compatibility rating: ' . ($response->compatibility_rating ?? 'N/A') .
-                ' Years of experience: ' . ($response->years_of_experience ?? 'N/A') .
-                ' Email: ' . ($response->email ?? 'N/A') .
-                ' Phone: ' . ($response->phone ?? 'N/A') .
-                ' LinkedIn: ' . ($response->linkedin ?? 'N/A') .
-                ' Location: ' . ($response->location ?? 'N/A') .
-                ' Current job title: ' . ($response->current_job_title ?? 'N/A') .
-                ' Current employer: ' . ($response->current_employer ?? 'N/A') .
-                ' University: ' . ($response->university ?? 'N/A') .
-                ' Certifications: ' . ($response->certifications ?? 'N/A') .
-                ' Technical skills: ' . ($response->technical_skills ?? 'N/A') .
-                ' Soft skills: ' . ($response->soft_skills ?? 'N/A') .
-                ' Languages spoken: ' . ($response->languages_spoken ?? 'N/A')
-            )
-            ->duration(1000000)
-            ->send();
     }
 
     private function handleErrorResponse(string $errorMessage): void
