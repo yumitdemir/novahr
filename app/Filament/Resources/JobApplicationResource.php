@@ -117,9 +117,12 @@ class JobApplicationResource extends Resource
                 Section::make('CV')
                     ->schema([
                         TextEntry::make('cv')
-                            ->label(false)
+                            ->label('Download CV')
                             ->url(fn(JobApplication $record) => Storage::url($record->cv))
                             ->openUrlInNewTab(),
+                        TextEntry::make('compatibility_rating'),
+                        TextEntry::make('compatibility_rating_reason')->columnSpan(2),
+                        TextEntry::make('short_summary')->columnSpan(2),
                     ])
                     ->columns(2),
                 Section::make('Job Opening Information')
