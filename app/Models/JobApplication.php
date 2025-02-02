@@ -15,27 +15,8 @@ class JobApplication extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'status',
-        'application_date',
-        'name',
-        'surname',
-        'cv',
-        'email',
-        'phone',
-        'linkedin',
-        'location',
-        'current_job_title',
-        'current_employer',
-        'years_of_experience',
-        'university',
-        'certifications',
-        'technical_skills',
-        'soft_skills',
-        'languages_spoken',
-        'compatibility_rating',
-        'job_opening_id',
-    ];
+    protected $guarded = [];
+
 
     /**
      * The attributes that should be cast to native types.

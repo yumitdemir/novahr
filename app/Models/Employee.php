@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -16,15 +17,8 @@ class Employee extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
-        'surname',
-        'email',
-        'phone',
-        'hire_date',
-        'salary',
-        'status',
-    ];
+    protected $guarded = [];
+
 
     /**
      * The attributes that should be cast to native types.
@@ -35,6 +29,7 @@ class Employee extends Model
         'id' => 'integer',
         'hire_date' => 'date',
         'salary' => 'float',
+        'department_id' => 'integer',
     ];
 
     public function leaveRequests(): HasMany
@@ -52,8 +47,8 @@ class Employee extends Model
         return $this->hasOne(Role::class);
     }
 
-    public function department(): HasOne
+    public function department(): BelongsTo
     {
-        return $this->hasOne(Department::class);
+        return $this->belongsTo(Department::class);
     }
 }

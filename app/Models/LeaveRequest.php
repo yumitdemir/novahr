@@ -15,14 +15,8 @@ class LeaveRequest extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'start_date',
-        'end_date',
-        'status',
-        'description',
-        'leave_type',
-        'employee_id',
-    ];
+    protected $guarded = [];
+
 
     /**
      * The attributes that should be cast to native types.

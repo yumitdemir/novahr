@@ -15,13 +15,8 @@ class Address extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'fullAddress',
-        'street',
-        'city',
-        'zip',
-        'employee_id',
-    ];
+    protected $guarded = [];
+
 
     /**
      * The attributes that should be cast to native types.

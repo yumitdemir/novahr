@@ -16,10 +16,8 @@ class Department extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
-        'description',
-    ];
+    protected $guarded = [];
+
 
     /**
      * The attributes that should be cast to native types.
