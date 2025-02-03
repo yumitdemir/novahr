@@ -31,6 +31,15 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->required()
+                    ->confirmed(),
+
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->password()
+                    ->required(),
+
                 Select::make('roles')
                     ->label('Roles')
                     ->multiple()
