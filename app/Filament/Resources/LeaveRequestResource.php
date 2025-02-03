@@ -109,6 +109,7 @@ class LeaveRequestResource extends Resource implements HasShieldPermissions
             'force_delete_any',
 
             'view_own_leave_request',
+            'view_any_own_leave_request',
             'update_own_leave_request',
             'delete_own_leave_request',
             'create_own_leave_request',

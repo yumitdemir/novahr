@@ -113,7 +113,7 @@ class LeaveRequestPolicy
      */
     public function viewOwn(User $user, LeaveRequest $leaveRequest): bool
     {
-        return $user->id === $leaveRequest->employee_id;
+        return $user->id === $leaveRequest->employee_id  && $user->can('view_own_leave_request::request');
     }
 
     /**
@@ -121,7 +121,7 @@ class LeaveRequestPolicy
      */
     public function createOwn(User $user): bool
     {
-        return true; // Assuming all users can create their own leave requests
+        return true && $user->can('create_own_leave_request::request');
     }
 
     /**
@@ -129,7 +129,7 @@ class LeaveRequestPolicy
      */
     public function updateOwn(User $user, LeaveRequest $leaveRequest): bool
     {
-        return $user->id === $leaveRequest->employee_id;
+        return $user->employee->id  === $leaveRequest->employee_id && $user->can('update_own_leave_request::request');
     }
 
     /**
@@ -137,7 +137,14 @@ class LeaveRequestPolicy
      */
     public function deleteOwn(User $user, LeaveRequest $leaveRequest): bool
     {
-        return $user->id === $leaveRequest->employee_id;
+        return $user->employee->id === $leaveRequest->employee_id  && $user->can('delete_own_leave_request::request');
     }
+
+    /**
+     * Determine whether the user can view any own leave request.
+     */
+    public function viewAnyOwn(User $user): bool
+    {
+        return true && $user->can('view_any_own_leave_request::request');    }
 
 }
