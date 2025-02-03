@@ -7,6 +7,7 @@ use App\Filament\Resources\LeaveRequestResource\RelationManagers;
 use App\Models\LeaveRequest;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -30,25 +31,29 @@ public static function getEloquentQuery(): Builder
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date')
-                    ->required(),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('description')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('leave_type')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\Select::make('employee_id')
-                    ->relationship('employee', 'name')
-                    ->required(),
-            ]);
+        $schema = [
+            Forms\Components\DatePicker::make('start_date')
+                ->required(),
+            Forms\Components\DatePicker::make('end_date')
+                ->required(),
+            Forms\Components\TextInput::make('status')
+                ->required()
+                ->maxLength(100),
+            Forms\Components\TextInput::make('description')
+                ->required()
+                ->maxLength(255),
+            Forms\Components\TextInput::make('leave_type')
+                ->required()
+                ->maxLength(100),
+        ];
+
+        if (auth()->user()->can('create_all_leave::request')) {
+            $schema[] = Select::make('employee_id')
+                ->relationship('employee', 'name')
+                ->required();
+        }
+
+        return $form->schema($schema);
     }
 
     public static function table(Table $table): Table
@@ -98,6 +103,11 @@ public static function getEloquentQuery(): Builder
             //
         ];
     }
+
+
+
+
+
 
 
     public static function getPermissionPrefixes(): array
