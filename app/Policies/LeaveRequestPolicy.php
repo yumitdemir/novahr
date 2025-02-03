@@ -23,7 +23,7 @@ class LeaveRequestPolicy
      */
     public function view(User $user, LeaveRequest $leaveRequest): bool
     {
-        return $user->can('view_leave::request');
+        return ($user->id === $leaveRequest->employee->user->id && $user->can('view_leave::request')) || $user->can('view_all_leave::request');
     }
 
     /**
@@ -39,7 +39,7 @@ class LeaveRequestPolicy
      */
     public function update(User $user, LeaveRequest $leaveRequest): bool
     {
-        return $user->can('update_leave::request');
+        return ($user->can('update_leave::request') && $leaveRequest->employee && $leaveRequest->employee->user && $user->id === $leaveRequest->employee->user->id) || $user->can('update_all_leave::request');
     }
 
     /**
@@ -105,46 +105,5 @@ class LeaveRequestPolicy
     {
         return $user->can('reorder_leave::request');
     }
-
-    //!    CUSTOM PERMISSIONS ----------------
-
-    /**
-     * Determine whether the user can view their own leave request.
-     */
-    public function viewOwn(User $user, LeaveRequest $leaveRequest): bool
-    {
-        return $user->id === $leaveRequest->employee_id  && $user->can('view_own_leave_request::request');
-    }
-
-    /**
-     * Determine whether the user can create their own leave request.
-     */
-    public function createOwn(User $user): bool
-    {
-        return true && $user->can('create_own_leave_request::request');
-    }
-
-    /**
-     * Determine whether the user can update their own leave request.
-     */
-    public function updateOwn(User $user, LeaveRequest $leaveRequest): bool
-    {
-        return $user->employee->id  === $leaveRequest->employee_id && $user->can('update_own_leave_request::request');
-    }
-
-    /**
-     * Determine whether the user can delete their own leave request.
-     */
-    public function deleteOwn(User $user, LeaveRequest $leaveRequest): bool
-    {
-        return $user->employee->id === $leaveRequest->employee_id  && $user->can('delete_own_leave_request::request');
-    }
-
-    /**
-     * Determine whether the user can view any own leave request.
-     */
-    public function viewAnyOwn(User $user): bool
-    {
-        return true && $user->can('view_any_own_leave_request::request');    }
 
 }

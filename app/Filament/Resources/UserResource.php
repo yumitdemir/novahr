@@ -45,7 +45,15 @@ class UserResource extends Resource
                     ->multiple()
                     ->relationship('roles', 'name')
                     ->preload()
+                    ->searchable(),
+
+                Select::make('employee_id')
+                    ->label('Employee')
+                    ->relationship('employee', 'name')
+                    ->preload()
                     ->searchable()
+                    ->required(),
+
             ]);
     }
 

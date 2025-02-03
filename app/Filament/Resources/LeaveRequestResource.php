@@ -20,6 +20,11 @@ class LeaveRequestResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->where('employee_id', auth()->user()->employee_id);
+}
+
     public static function form(Form $form): Form
     {
         return $form
@@ -108,11 +113,11 @@ class LeaveRequestResource extends Resource implements HasShieldPermissions
             'force_delete',
             'force_delete_any',
 
-            'view_own_leave_request',
-            'view_any_own_leave_request',
-            'update_own_leave_request',
-            'delete_own_leave_request',
-            'create_own_leave_request',
+            'view_any_all',
+            'view_all',
+            'update_all',
+            'delete_all',
+            'create_all',
         ];
     }
 
