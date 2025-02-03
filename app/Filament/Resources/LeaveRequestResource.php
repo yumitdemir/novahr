@@ -22,6 +22,9 @@ class LeaveRequestResource extends Resource implements HasShieldPermissions
 
 public static function getEloquentQuery(): Builder
 {
+    if (auth()->user()->can('view_any_all_leave::request')) {
+        return parent::getEloquentQuery();
+    }
     return parent::getEloquentQuery()->where('employee_id', auth()->user()->employee_id);
 }
 
