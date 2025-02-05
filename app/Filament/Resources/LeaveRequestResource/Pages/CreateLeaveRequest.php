@@ -10,9 +10,15 @@ class CreateLeaveRequest extends CreateRecord
 {
     protected static string $resource = LeaveRequestResource::class;
 
+
+
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['employee_id'] = auth()->user()->employee_id;
+        $user = auth()->user();
+        if ($user && !$user->can('update_all_leave::request')) {
+            $data['employee_id'] = $user->employee_id;
+        }
         return $data;
     }
 }

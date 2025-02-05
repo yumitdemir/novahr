@@ -22,8 +22,7 @@ class EmployeeResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
+        $schema = [
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(100),
@@ -68,8 +67,18 @@ class EmployeeResource extends Resource
                             ->required()
                             ->maxLength(100),
                     ])
-            ]);
+            ];
+        if (auth()->user()->can('create_employee')) {
+            $schema[] = Forms\Components\Select::make('user_id')
+                ->relationship('user', 'name', function ($query) {
+                    $query->whereDoesntHave('employee');
+                })
+                ->required();
+        }
+
+        return $form->schema($schema);
     }
+
 
     public static function table(Table $table): Table
     {

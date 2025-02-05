@@ -34,4 +34,15 @@ class LeaveRequest extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $user = auth()->user();
+            if ($user && !$user->can('update_all_leave::request')) {
+                $model->employee_id = $user->employee_id;
+            }
+        });
+    }
 }
