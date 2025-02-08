@@ -29,32 +29,36 @@ public static function getEloquentQuery(): Builder
     return parent::getEloquentQuery()->where('employee_id', auth()->user()->employee_id);
 }
 
-    public static function form(Form $form): Form
-    {
-        $schema = [
-            Forms\Components\DatePicker::make('start_date')
-                ->required(),
-            Forms\Components\DatePicker::make('end_date')
-                ->required(),
-            Forms\Components\TextInput::make('status')
-                ->required()
-                ->maxLength(100),
-            Forms\Components\TextInput::make('description')
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('leave_type')
-                ->required()
-                ->maxLength(100),
-        ];
+public static function form(Form $form): Form
+{
+    $schema = [
+        Forms\Components\DatePicker::make('start_date')
+            ->required(),
+        Forms\Components\DatePicker::make('end_date')
+            ->required(),
+        Forms\Components\TextInput::make('description')
+            ->required()
+            ->maxLength(255),
+        Forms\Components\TextInput::make('leave_type')
+            ->required()
+            ->maxLength(100),
+    ];
 
-        if (auth()->user()->can('create_all_leave::request')) {
-            $schema[] = Select::make('employee_id')
-                ->relationship('employee', 'name')
-                ->required();
-        }
-
-        return $form->schema($schema);
+    if (auth()->user()->can('create_all_leave::request')) {
+        $schema[] = Forms\Components\Select::make('status')
+            ->options([
+                'pending' => 'Pending',
+                'approved' => 'Approved',
+                'rejected' => 'Rejected',
+            ])
+            ->required();
+        $schema[] = Select::make('employee_id')
+            ->relationship('employee', 'name')
+            ->required();
     }
+
+    return $form->schema($schema);
+}
 
     public static function table(Table $table): Table
     {
@@ -96,18 +100,6 @@ public static function getEloquentQuery(): Builder
                 ]),
             ]);
     }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-
-
-
-
 
 
     public static function getPermissionPrefixes(): array

@@ -43,6 +43,9 @@ class LeaveRequest extends Model
             if ($user && !$user->can('update_all_leave::request')) {
                 $model->employee_id = $user->employee_id;
             }
+            if ($user && !$user->can('create_all_leave::request')) {
+                $model->status = 'pending';
+            }
         });
     }
 }
