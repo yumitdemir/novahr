@@ -31,6 +31,9 @@ class EmployeeResource extends Resource
                 Forms\Components\TextInput::make('surname')
                     ->required()
                     ->maxLength(100),
+                Forms\Components\TextInput::make('employee_position')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->maxLength(100),
