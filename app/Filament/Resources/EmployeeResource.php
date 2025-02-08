@@ -7,6 +7,7 @@ use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -42,7 +43,11 @@ class EmployeeResource extends Resource
                 Forms\Components\TextInput::make('salary')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ])
                     ->required(),
                 Forms\Components\Select::make('department_id')
                     ->relationship(name: 'department', titleAttribute: 'name')
@@ -68,13 +73,32 @@ class EmployeeResource extends Resource
                             ->maxLength(100),
                     ])
             ];
-        if (auth()->user()->can('create_employee')) {
-            $schema[] = Forms\Components\Select::make('user_id')
-                ->relationship('user', 'name', function ($query) {
-                    $query->whereDoesntHave('employee');
-                })
-                ->required();
-        }
+if (auth()->user()->can('create_employee')) {
+    $schema[] = Forms\Components\Select::make('user_id')
+        ->relationship('user', 'name', function ($query) {
+            $query->whereDoesntHave('employee');
+        })
+        ->required()
+        ->createOptionForm([
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(100),
+            Forms\Components\TextInput::make('email')
+                ->email()
+                ->required()
+                ->maxLength(100),
+            Forms\Components\TextInput::make('password')
+                ->password()
+                ->required()
+                ->maxLength(100),
+            Select::make('roles')
+                ->label('Roles')
+                ->multiple()
+                ->relationship('roles', 'name')
+                ->preload()
+                ->searchable()
+        ]);
+}
 
         return $form->schema($schema);
     }

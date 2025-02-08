@@ -23,7 +23,7 @@ class LeaveRequestPolicy
      */
     public function view(User $user, LeaveRequest $leaveRequest): bool
     {
-        return ($user->id === $leaveRequest->employee->user->id && $user->can('view_leave::request')) || $user->can('view_all_leave::request');
+        return $user->can('view_leave::request');
     }
 
     /**
@@ -39,7 +39,7 @@ class LeaveRequestPolicy
      */
     public function update(User $user, LeaveRequest $leaveRequest): bool
     {
-        return ($user->can('update_leave::request') && $leaveRequest->employee && $leaveRequest->employee->user && $user->id === $leaveRequest->employee->user->id) || $user->can('update_all_leave::request');
+        return $user->can('update_leave::request');
     }
 
     /**
@@ -105,5 +105,4 @@ class LeaveRequestPolicy
     {
         return $user->can('reorder_leave::request');
     }
-
 }
