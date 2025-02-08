@@ -9,14 +9,12 @@ use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EmployeeResource extends Resource
 {
@@ -78,9 +76,7 @@ class EmployeeResource extends Resource
             ];
 if (auth()->user()->can('create_employee')) {
     $schema[] = Forms\Components\Select::make('user_id')
-        ->relationship('user', 'name', function ($query) {
-            $query->whereDoesntHave('employee');
-        })
+        ->relationship('user', 'name')
         ->required()
         ->createOptionForm([
             Forms\Components\TextInput::make('name')
@@ -147,6 +143,7 @@ if (auth()->user()->can('create_employee')) {
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -158,10 +155,41 @@ if (auth()->user()->can('create_employee')) {
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\EmployeeChangeLogsRelationManager::class
         ];
     }
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            Grid::make()
+                ->schema([
+                    TextEntry::make('name')
+                        ->label('Name'),
+                    TextEntry::make('surname')
+                        ->label('Surname'),
+                    TextEntry::make('email')
+                        ->label('Email'),
+                    TextEntry::make('phone')
+                        ->label('Phone'),
+                    TextEntry::make('hire_date')
+                        ->label('Hire Date')
+                        ->date(),
+                    TextEntry::make('salary')
+                        ->label('Salary')
+                        ->numeric(),
+                    TextEntry::make('department.name')
+                        ->label('Department'),
+                    TextEntry::make('status')
+                        ->label('Status'),
+                ])
+                ->columns([
+                    'default' => 4,
+                    'sm' => 2,
+                    'md' => 4,
+                ]),
 
+        ]);
+    }
 
     public static function getPages(): array
     {
@@ -169,6 +197,7 @@ if (auth()->user()->can('create_employee')) {
             'index' => Pages\ListEmployees::route('/'),
             'create' => Pages\CreateEmployee::route('/create'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
+            'view' => Pages\ViewEmployee::route('/{record}'),
         ];
     }
 }
