@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
+use App\Filament\Resources\EmployeeResource\Widgets\SalaryTrend;
 use App\Models\Employee;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -155,6 +156,12 @@ if (auth()->user()->can('create_employee')) {
             ]);
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            SalaryTrend::class
+        ];
+    }
     public static function getRelations(): array
     {
         return [

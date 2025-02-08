@@ -15,7 +15,6 @@ class HiringTrend extends ChartWidget
     protected static ?string $heading = 'Hiring Trend';
     protected static string $color = 'info';
 
-
     protected function getData(): array
     {
 
