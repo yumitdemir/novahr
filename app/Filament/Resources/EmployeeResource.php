@@ -9,6 +9,9 @@ use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -158,6 +161,7 @@ if (auth()->user()->can('create_employee')) {
             //
         ];
     }
+
 
     public static function getPages(): array
     {

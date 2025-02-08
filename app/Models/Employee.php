@@ -56,4 +56,32 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function employeeChangeLogs(): HasMany
+    {
+        return $this->hasMany(EmployeeChangeLog::class);
+    }
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($employee) {
+            $changes = $employee->getChanges();
+            $original = $employee->getOriginal();
+
+            foreach ($changes as $key => $value) {
+                if ($key !== 'updated_at') {
+                    EmployeeChangeLog::create([
+                        'employee_id' => $employee->id,
+                        'change_type' => $key,
+                        'old_value' => $original[$key] ?? null,
+                        'new_value' => $value,
+                        'changed_at' => now(),
+                    ]);
+                }
+            }
+        });
+    }
 }
