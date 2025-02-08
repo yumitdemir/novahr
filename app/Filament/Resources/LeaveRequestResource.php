@@ -64,64 +64,69 @@ public static function form(Form $form): Form
     return $form->schema($schema);
 }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('start_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('end_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('leave_type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('employee.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+public static function table(Table $table): Table
+{
+    $filters = [
+        Tables\Filters\SelectFilter::make('status')
+            ->options([
+                'pending' => 'Pending',
+                'approved' => 'Approved',
+                'rejected' => 'Rejected',
             ])
-            ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
-                    ])
-                    ->label('Status'),
-                Tables\Filters\SelectFilter::make('leave_type')
-                    ->options([
-                        'sick' => 'Sick Leave',
-                        'vacation' => 'Vacation',
-                        'personal' => 'Personal Leave',
-                    ])
-                    ->label('Leave Type'),
-                auth()->user()->can('view_all_leave::request') ? Tables\Filters\SelectFilter::make('employee_id')
-                    ->relationship('employee', 'name')
-                    ->searchable()
-                    ->label('Employee') : null,
+            ->label('Status'),
+        Tables\Filters\SelectFilter::make('leave_type')
+            ->options([
+                'sick' => 'Sick Leave',
+                'vacation' => 'Vacation',
+                'personal' => 'Personal Leave',
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->label('Leave Type'),
+    ];
+
+    if (auth()->user()->can('view_all_leave::request')) {
+        $filters[] = Tables\Filters\SelectFilter::make('employee_id')
+            ->relationship('employee', 'name')
+            ->searchable()
+            ->label('Employee');
     }
+
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('start_date')
+                ->date()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('end_date')
+                ->date()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('status')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('description')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('leave_type')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('employee.name')
+                ->numeric()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('created_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('updated_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ])
+        ->filters($filters)
+        ->actions([
+            Tables\Actions\EditAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
+}
 
 
     public static function getPermissionPrefixes(): array
