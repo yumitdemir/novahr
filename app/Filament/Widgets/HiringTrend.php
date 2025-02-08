@@ -12,14 +12,8 @@ class HiringTrend extends ChartWidget
 {
 
     use HasWidgetShield;
-    protected static ?string $heading = 'Chart';
+    protected static ?string $heading = 'Hiring Trend';
     protected static string $color = 'info';
-
-
-//    public static function canView(): bool
-//    {
-//        return auth()->user()->isAdmin();
-//    }
 
 
     protected function getData(): array
