@@ -58,7 +58,16 @@ public function table(Table $table): Table
                     return $query
                         ->when($data['changed_from'], fn ($query, $date) => $query->whereDate('changed_at', '>=', $date))
                         ->when($data['changed_until'], fn ($query, $date) => $query->whereDate('changed_at', '<=', $date));
-                })
+                }),
+            Tables\Filters\Filter::make('change_type')
+                ->form([
+                    Forms\Components\TextInput::make('change_type')
+                        ->label('Change Type')
+                        ->placeholder('Search Change Type'),
+                ])
+                ->query(function (Builder $query, array $data) {
+                    return $query->when($data['change_type'], fn ($query, $changeType) => $query->where('change_type', 'like', "%{$changeType}%"));
+                }),
         ])
         ->headerActions([
             // Add your header actions here
