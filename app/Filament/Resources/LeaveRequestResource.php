@@ -108,6 +108,10 @@ public static function form(Form $form): Form
                         'personal' => 'Personal Leave',
                     ])
                     ->label('Leave Type'),
+                auth()->user()->can('view_all_leave::request') ? Tables\Filters\SelectFilter::make('employee_id')
+                    ->relationship('employee', 'name')
+                    ->searchable()
+                    ->label('Employee') : null,
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
