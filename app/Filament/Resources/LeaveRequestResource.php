@@ -39,9 +39,13 @@ public static function form(Form $form): Form
         Forms\Components\TextInput::make('description')
             ->required()
             ->maxLength(255),
-        Forms\Components\TextInput::make('leave_type')
-            ->required()
-            ->maxLength(100),
+        Forms\Components\Select::make('leave_type')
+            ->options([
+                'sick' => 'Sick Leave',
+                'vacation' => 'Vacation',
+                'personal' => 'Personal Leave',
+            ])
+            ->required(),
     ];
 
     if (auth()->user()->can('create_all_leave::request')) {
@@ -71,6 +75,7 @@ public static function form(Form $form): Form
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
                     ->searchable(),
@@ -89,7 +94,20 @@ public static function form(Form $form): Form
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                    ])
+                    ->label('Status'),
+                Tables\Filters\SelectFilter::make('leave_type')
+                    ->options([
+                        'sick' => 'Sick Leave',
+                        'vacation' => 'Vacation',
+                        'personal' => 'Personal Leave',
+                    ])
+                    ->label('Leave Type'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
