@@ -143,7 +143,17 @@ if (auth()->user()->can('create_employee')) {
                     ->label('Street'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ])
+                    ->label('Status'),
+                Tables\Filters\SelectFilter::make('department_id')
+                    ->relationship('department', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Department'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
