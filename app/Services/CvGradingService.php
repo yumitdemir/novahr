@@ -6,6 +6,8 @@ use App\Models\JobApplication;
 use Filament\Notifications\Notification;
 use OpenAI\Laravel\Facades\OpenAI;
 use Exception;
+use PhpOffice\PhpWord\Shared\ZipArchive;
+use Spatie\PdfToText\Pdf;
 
 class CvGradingService implements CvGradingServiceInterface
 {
@@ -169,16 +171,30 @@ EOT;
             throw new Exception('CV file not found.');
         }
 
-        // Read the file content
-        $fileContent = file_get_contents($filePath);
+        // Get the file extension to determine the type
+        $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
 
-        if ($fileContent === false) {
-            throw new Exception('Unable to read CV file.');
+        // Handle PDF files
+        if (strtolower($fileExtension) === 'pdf') {
+            $text = (new Pdf('C:\poppler-24.08.0\Library\bin\pdftotext.exe'))
+                ->setPdf($filePath)
+                ->text();
+            dd($text);
+            return $text;
         }
 
-        // Ensure the content is properly encoded to UTF-8
-        $fileContent = mb_convert_encoding($fileContent, 'UTF-8', 'auto');
+        // Handle DOCX files
+        if (strtolower($fileExtension) === 'docx') {
+            $zip = new ZipArchive;
+            if ($zip->open($filePath) === TRUE) {
+                $xml = $zip->getFromName("word/document.xml");
+                $zip->close();
+                // Remove XML tags to get plain text
+                $text = strip_tags($xml);
+                return $text;
+            }
+            throw new Exception("Unable to open DOCX file.");
+        }
 
-        return $fileContent;
     }
 }
