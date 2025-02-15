@@ -39,9 +39,9 @@ class LeaveRequest extends Model
     {
         parent::boot();
         static::creating(function ($model) {
-            $user = auth()->user();
+            $user = auth()->user()->load('employee');
             if ($user && !$user->can('update_all_leave::request')) {
-                $model->employee_id = $user->employee_id;
+                $model->employee_id = $user->employee->id;
             }
             if ($user && !$user->can('create_all_leave::request')) {
                 $model->status = 'pending';

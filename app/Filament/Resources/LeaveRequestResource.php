@@ -4,16 +4,21 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\LeaveRequestResource\Pages;
 use App\Filament\Resources\LeaveRequestResource\RelationManagers;
+use App\Models\JobApplication;
 use App\Models\LeaveRequest;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class LeaveRequestResource extends Resource implements HasShieldPermissions
 {
@@ -26,7 +31,7 @@ public static function getEloquentQuery(): Builder
     if (auth()->user()->can('view_any_all_leave::request')) {
         return parent::getEloquentQuery();
     }
-    return parent::getEloquentQuery()->where('employee_id', auth()->user()->employee_id);
+    return parent::getEloquentQuery()->where('employee_id', auth()->user()->employee->id);
 }
 
 public static function form(Form $form): Form
@@ -120,6 +125,7 @@ public static function table(Table $table): Table
         ->filters($filters)
         ->actions([
             Tables\Actions\EditAction::make(),
+            Tables\Actions\ViewAction::make(),
         ])
         ->bulkActions([
             Tables\Actions\BulkActionGroup::make([
@@ -127,6 +133,22 @@ public static function table(Table $table): Table
             ]),
         ]);
 }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Leave Information')
+                    ->schema([
+                        TextEntry::make('start_date'),
+                        TextEntry::make('end_date'),
+                        TextEntry::make('description'),
+                        TextEntry::make('leave_type'),
+                        TextEntry::make('status'),
+                    ])
+                    ->columns(2),
+            ]);
+    }
 
 
     public static function getPermissionPrefixes(): array
@@ -159,6 +181,7 @@ public static function table(Table $table): Table
             'index' => Pages\ListLeaveRequests::route('/'),
             'create' => Pages\CreateLeaveRequest::route('/create'),
             'edit' => Pages\EditLeaveRequest::route('/{record}/edit'),
+            'view' => Pages\ViewLeaveRequest::route('/{record}'),
         ];
     }
 }
