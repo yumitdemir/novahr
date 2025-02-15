@@ -6,38 +6,50 @@ use App\Models\Employee;
 use App\Models\EmployeeChangeLog;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class SalaryTrend extends ChartWidget
+class SalaryTrend extends BaseWidget
 {
 
     use HasWidgetShield;
 
-    protected static ?string $heading = 'Salary Trend';
 
     public ?Employee $record;
 
 
-    protected function getData(): array
-    {
-        $changeLogs = EmployeeChangeLog::query()
-            ->where('employee_id', $this->record->id)
-            ->where('change_type', 'salary')
-            ->orderBy('changed_at')
-            ->get(['changed_at', 'new_value']);
+protected function getStats(): array
+{
+    $changeLogs = EmployeeChangeLog::query()
+        ->where('employee_id', $this->record->id)
+        ->where('change_type', 'salary')
+        ->orderBy('changed_at')
+        ->get(['changed_at', 'old_value', 'new_value']);
 
-        return [
-            'labels' => $changeLogs->pluck('changed_at'),
-            'datasets' => [
-                [
-                    'label' => $this->record->name,
-                    'data' => $changeLogs->pluck('new_value'),
-                ],
-            ],
-        ];
+    if ($changeLogs->isNotEmpty()) {
+        $oldestChange = $changeLogs->first();
+        $newestChange = $changeLogs->last();
+
+        $oldValue = $oldestChange->old_value;
+        $newValue = $newestChange->new_value;
+
+        if ($oldValue != 0) {
+            $percentageChange = number_format((($newValue - $oldValue) / $oldValue) * 100, 2);
+        } else {
+            $percentageChange = 0;
+        }
+
+        $lastChangedAt = $newestChange->changed_at->format(' Y.m.d -  H:i ');
+    } else {
+        $percentageChange = 0;
+        $lastChangedAt = 'N/A';
     }
 
-    protected function getType(): string
-    {
-        return 'line';
-    }
+    return [
+        Stat::make('Salary Increase', $percentageChange . '%'),
+        Stat::make('Salary Updated At', $lastChangedAt),
+    ];
+}
+
+
 }

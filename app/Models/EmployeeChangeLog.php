@@ -15,6 +15,10 @@ class EmployeeChangeLog extends Model
         'changed_at',
     ];
 
+    protected $casts = [
+        'changed_at' => 'datetime',
+    ];
+
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
