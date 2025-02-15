@@ -179,7 +179,6 @@ EOT;
             $text = (new Pdf('C:\poppler-24.08.0\Library\bin\pdftotext.exe'))
                 ->setPdf($filePath)
                 ->text();
-            dd($text);
             return $text;
         }
 
